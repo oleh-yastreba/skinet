@@ -1,3 +1,4 @@
+using API.Helpers;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Реєструємо DI
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+builder.Services.AddAutoMapper(typeof(MappingProfiles));
 builder.Services.AddControllers();
 
 // Підключаємо DbContext (Sqlite)
@@ -43,6 +46,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+app.UseStaticFiles();
+
+app.UseAuthorization();
 
 app.MapControllers();
 
