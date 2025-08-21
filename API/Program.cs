@@ -1,23 +1,24 @@
+using API.Extensions;
 using API.Helpers;
-using Core.Interfaces;
+using API.Middleware;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Реєструємо DI
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 builder.Services.AddControllers();
 
 // Підключаємо DbContext (Sqlite)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<StoreContext>(x =>
-    x.UseSqlite(connectionString));
+builder.Services.AddDbContext<StoreContext>(x => x.UseSqlite(connectionString));
 
-// OpenAPI (Swagger)
-builder.Services.AddOpenApi();
+// Підключаємо ApplicationServicesExtensions
+builder.Services.AddApplicationServices();
+
+// Підключаємо SwaggerServiceExtension
+builder.Services.AddSwaggerDocumentation();
 
 var app = builder.Build();
 
@@ -39,19 +40,17 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Swagger у Dev
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseMiddleware<ExceptionMiddleware>();
+
+//Використовуємо SwaggerServiceExtension
+app.UseSwaggerDocumentation();
+
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
 app.UseStaticFiles();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
