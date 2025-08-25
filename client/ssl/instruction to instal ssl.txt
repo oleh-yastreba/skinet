@@ -1,0 +1,33 @@
+1️⃣ Через PowerShell (вбудовані cmdlets)
+Команда для створення сертифіката для localhost
+
+$cert = New-SelfSignedCertificate `
+    -DnsName "localhost" `
+    -CertStoreLocation "Cert:\LocalMachine\My" `
+    -NotAfter (Get-Date).AddYears(1) `
+    -KeyExportPolicy Exportable `
+    -FriendlyName "Angular Localhost Dev"
+
+
+2️⃣ Експортувати сертифікат у файли .crt і .key
+
+# Створюємо директорію для SSL
+New-Item -ItemType Directory -Force -Path "D:\Programming\Skinet_e-commerce-app\skinet\client\ssl"
+
+# Експортуємо сертифікат у .pfx
+$pfxPath = "D:\Programming\Skinet_e-commerce-app\skinet\client\ssl\server.pfx"
+Export-PfxCertificate -Cert $cert -FilePath $pfxPath -Password (ConvertTo-SecureString -String "1234" -Force -AsPlainText)
+
+# Конвертуємо у .crt і .key через OpenSSL (якщо вже встановлений)
+openssl pkcs12 -in "D:\Programming\Skinet_e-commerce-app\skinet\client\ssl\server.pfx" -nocerts -out "D:\Programming\Skinet_e-commerce-app\skinet\client\ssl\server.key" -nodes -passin pass:1234
+
+openssl pkcs12 -in "D:\Programming\Skinet_e-commerce-app\skinet\client\ssl\server.pfx" -clcerts -nokeys -out "D:\Programming\Skinet_e-commerce-app\skinet\client\ssl\server.crt" -passin pass:1234
+
+3️⃣ Додати сертифікат у Trusted Root Certification Authorities
+
+Двічі клік по сертифікату у MMC → Install Certificate → Trusted Root Certification Authorities.
+
+Chrome/Edge після перезапуску почнуть довіряти.
+
+
+

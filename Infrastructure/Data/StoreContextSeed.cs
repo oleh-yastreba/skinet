@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Core.Entities;  
+using Core.Entities;
 
 namespace Infrastructure.Data
 {
@@ -20,7 +20,7 @@ namespace Infrastructure.Data
 
                     var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);
 
-                    foreach (var item in brands)
+                    foreach (var item in brands!)
                     {
                         context.ProductBrands.Add(item);
                     }
@@ -35,7 +35,7 @@ namespace Infrastructure.Data
 
                     var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
 
-                    foreach (var item in types)
+                    foreach (var item in types!)
                     {
                         context.ProductTypes.Add(item);
                     }
@@ -50,7 +50,7 @@ namespace Infrastructure.Data
 
                     var products = JsonSerializer.Deserialize<List<Product>>(productsData);
 
-                    foreach (var item in products)
+                    foreach (var item in products!)
                     {
                         context.Products.Add(item);
                     }
