@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { PagerComponent } from './components/pager/pager.component';
 import { PaginHeaderComponent } from './components/pagin-header/pagin-header.component';
@@ -12,12 +13,14 @@ import { PaginHeaderComponent } from './components/pagin-header/pagin-header.com
     ],
     imports: [
         CommonModule,
-        PaginationModule.forRoot()
+        PaginationModule.forRoot(),
+        CarouselModule.forRoot()
     ],
     exports: [
         PaginationModule,
         PaginHeaderComponent,
-        PagerComponent
+        PagerComponent,
+        CarouselModule
     ]
 })
 export class SharedModule { }
